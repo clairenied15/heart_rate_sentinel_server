@@ -77,10 +77,10 @@ def average_hr(pre_hr):
     return(av_hr)
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
-def int_av():
+def int_av(t_stamp):
     time_av = {
     "patient_id": "1",
-    "heart_rate_average_since": "2018-03-09 11:00:36.372339"
+    "heart_rate_average_since": t_stamp
     }
     return jsonify(time_av)
 
