@@ -25,14 +25,21 @@ def heart_rate():
      "heart_rate": 80,
      "time_stamp": datetime.datetime.now()
     })
-    return jsonify(pat_hr_list)
+    c = {}
+    for d in pat_hr_list:
+        c.setdefault(d['patient_id'], []).append(d['heart_rate'])
+    b = [{'id': k, 'heart_rate': v} for k, v in c.iteritems()]
+
+    hr_lst = [l['heart_rate'] for l in pat_hr_list]
+    time_list = [m['time_stamp'] for m in pat_hr_list]
+    return jsonify(pat_hr_list, b, hr_lst, time_list)
 
 
 @app.route("/api/status/patient", methods=["GET"])
 def tachycardia():
     r = request.get_json()
-    age = r["user_age"]
-    hr = r["heart_rate"]
+    age = r["user_age"]  # make r a list?
+    hr = r["heart_rate"]  # make hr a list?
     if age >= 1 & age <= 2:
         if hr > 151:
             state = 'tachycardia'
