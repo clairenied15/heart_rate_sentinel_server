@@ -1,9 +1,10 @@
 import requests
 
 def call_status():
-    r = requests.get("http://127.0.0.1:5000/api/status/patient")
-    answer = r.json()
-    print(r)
+    my_dict = {"user_age": 50, "heart_rate": 100}
+    r = requests.get("http://127.0.0.1:5000/api/status/patient", json=my_dict)
+    answer = r.text()
+    print(answer)
 
 
 if __name__ == "__main__":
