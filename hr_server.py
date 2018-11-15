@@ -28,8 +28,7 @@ def heart_rate():
     c = {}
     for d in pat_hr_list:
         c.setdefault(d['patient_id'], []).append(d['heart_rate'])
-    b = [{'id': k, 'heart_rate': v} for k, v in c.iteritems()]
-
+    b = [{'id': k, 'heart_rate': v} for k, v in c.items()]
     hr_lst = [l['heart_rate'] for l in pat_hr_list]
     time_list = [m['time_stamp'] for m in pat_hr_list]
     return jsonify(pat_hr_list, b, hr_lst, time_list)
