@@ -3,71 +3,85 @@ import datetime
 app = Flask(__name__)
 
 
+pat_list = []
+pat_hr_list = []
+c = {}
+g = {}
+b = []
+p = []
+
 @app.route("/api/new_patient", methods=["POST"])
 def new_patient():
-    new_pat_list = [{
+    new_pat = {
      "patient_id": "1",  # usually this would be the patient MRN
      "attending_email": "cen17@duke.edu",
      "user_age": 50,  # in years
-    }]
-    return jsonify(new_pat_list)
+    }
+    global pat_list
+    pat_list.append(new_pat)
+    return jsonify(new_pat)
 
 
 @app.route("/api/heart_rate", methods=["POST"])
 def heart_rate():
-    pat_hr_list = [{
+    pat_hr = {
      "patient_id": "1",  # usually this would be the patient MRN
      "heart_rate": 100,
      "time_stamp": datetime.datetime.now()
-    }]
-    pat_hr_list.append({
-     "patient_id": "1",  # usually this would be the patient MRN
-     "heart_rate": 80,
-     "time_stamp": datetime.datetime.now()
-    })
-    c = {}
+    }
+    global pat_hr_list
+    global c
+    global g
+    pat_hr_list.append(pat_hr)
     for d in pat_hr_list:
         c.setdefault(d['patient_id'], []).append(d['heart_rate'])
-    b = [{'id': k, 'heart_rate': v} for k, v in c.items()]
-    hr_lst = [l['heart_rate'] for l in pat_hr_list]
-    time_list = [m['time_stamp'] for m in pat_hr_list]
-    return jsonify(pat_hr_list, b, hr_lst, time_list)
+    global b
+    b = [{'patient_id': k, 'heart_rate': v} for k, v in c.items()]
+    for n in pat_hr_list:
+        g.setdefault(n['patient_id'], []).append(n['time_stamp'])
+    global p
+    p = [{'patient_id': k, 'time_stamp': v} for k, v in g.items()]
+    # hr_lst = [l['heart_rate'] for l in pat_hr_list]
+    # time_list = [m['time_stamp'] for m in pat_hr_list]
+    return jsonify(pat_hr)
 
 
 @app.route("/api/status/patient", methods=["GET"])
 def tachycardia():
+    #  for most recent/last hr!!!
+    # every time have post request, see if person is tachycardic
     r = request.get_json()
-    age = r["user_age"]  # make r a list?
-    hr = r["heart_rate"]  # make hr a list?
-    if age >= 1 & age <= 2:
+    age = r["user_age"]
+    hr = r["heart_rate"]
+    if age >= 1 and age <= 2:
         if hr > 151:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
-    if age >= 3 & age <= 4:
+    if age >= 3 and age <= 4:
         if hr > 137:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
-    if age >= 5 & age <= 7:
+    if age >= 5 and age <= 7:
         if hr > 133:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
-    if age >= 8 & age <= 11:
+    if age >= 8 and age <= 11:
         if hr > 130:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
-    if age >= 12 & age <= 15:
+    if age >= 12 and age <= 15:
         if hr > 119:
             state = 'tachycardia'
         else:
@@ -83,30 +97,76 @@ def tachycardia():
 
 
 @app.route("/api/heart_rate/<patient_id>", methods={"GET"})
-def prev_hr(patient_id):
-    s = request.get_json()
-    d = s["patient_id"]
-    if d == patient_id:
-        pre_hr = s["heart_rate"]
-        return pre_hr
+def prev_hr(b, p, patient_id):
+    # s = requests.get("http://127.0.0.1:5000/api/heart_rate")
+    # for d in s:  # does this work if its json???
+      #  if d['patient_id'] == patient_id:
+       #     pre_hr = d['heart_rate']
+        #    return jsonify(pre_hr)
+    # r = request.get_json()
+        # patinfo = item[0]
+    hrlist = b
+    timelist = p
+    hrinfo_by_id = build_dict(hrlist, key="patient_id")
+    hr_info = hrinfo_by_id.get(patient_id)
+    tminfo_by_id = build_dict(timelist, key="patient_id")
+    tm_info = tminfo_by_id.get(patient_id)
+    prev_hrs = hr_info['heart_rate']
+    return jsonify(prev_hrs)
 
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
-def average_hr(patient_id, pre_hr):
-    p = request.get_json()
-    d = p["patient_id"]
-    if d == patient_id:
-        av_hr = mean(pre_hr)
-        return av_hr
+def average_hr(patient_id, b, p):
+    # p = request.get_json()
+    # p = requests.get("http://127.0.0.1:5000/api/heart_rate")
+    # for d in p:
+    #  if d['patient_id'] == patient_id:
+    #     hrs = d['heart_rate']
+    #    av_hr = mean(hrs)
+    #   return jsonify(av_hr)
+    # r = request.get_json()
+    # for item in r:
+        # patinfo = item[0]
+    hrlist = b
+    timelist = p
+    hrinfo_by_id = build_dict(hrlist, key="patient_id")
+    hr_info = hrinfo_by_id.get(patient_id)
+    tminfo_by_id = build_dict(timelist, key="patient_id")
+    tm_info = tminfo_by_id.get(patient_id)
+    hrs = hr_info['heart_rate']
+    hr_av = mean(hrs)
+    return jsonify(hrs, hr_av)
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
-def int_av(t_stamp):
+def int_av(b, p):
     time_av = {
      "patient_id": "1",
-     "heart_rate_average_since": t_stamp[-1]
+     "heart_rate_average_since": "2018-03-09 11:00:36.372339"
     }
-    return jsonify(time_av)
+    # r = request.get_json()
+    # for item in r:
+        # patinfo = item[0]
+    hrlist = b
+    timelist = p
+    hrinfo_by_id = build_dict(hrlist, key="patient_id")
+    hr_info = hrinfo_by_id.get(time_av["patient_id"])
+    tminfo_by_id = build_dict(timelist, key="patient_id")
+    tm_info = tminfo_by_id.get(time_av["patient_id"])
+    # r = requests.get("http://127.0.0.1:5000/api/heart_rate")  # can do get request in POST???
+    indices = [i for i, v in enumerate(tm_info['time_stamp'] >= time_av['heart_rate_average_since']) if v]
+    hr_since_time = hr_info['heart_rate'][indices]
+    hr_time_av = mean(hr_since_time)
+        # if dict['patient_id'] == time_av['patient_id']:
+        #  j = [i for i in d['time_stamp'] if i >= time_av['heart_rate_average_since']]
+        # indices = [i for i, v in enumerate(d['time_stamp'] >= time_av['heart_rate_average_since']) if v]
+        #  num = len(j)
+        # hr_since_time = d['heart_rate'][indices]
+    return jsonify(time_av, hr_since_time, hr_time_av)
+
+
+def build_dict(seq, key):
+    return dict((d[key], dict(d, index=index)) for (index, d) in enumerate(seq))
 
 
 if __name__ == "__main__":
