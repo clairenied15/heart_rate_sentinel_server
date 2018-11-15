@@ -46,50 +46,58 @@ def heart_rate():
     return jsonify(pat_hr)
 
 
-@app.route("/api/status/patient", methods=["GET"])
-def tachycardia():
+@app.route("/api/status/<patient_id>", methods=["GET"])
+def tachycardia(patient_id):
     #  for most recent/last hr!!!
     # every time have post request, see if person is tachycardic
-    r = request.get_json()
-    age = r["user_age"]
-    hr = r["heart_rate"]
+    # r = request.get_json()
+    # age = r["user_age"]
+    # hr = r["heart_rate"]
+    hrlist = b
+    hrinfo_by_id = build_dict(hrlist, key="patient_id")
+    hr_info = hrinfo_by_id.get(patient_id)
+    patlist = pat_list
+    patinfo_by_id = build_dict(patlist, key="patient_id")
+    pt_info = patinfo_by_id.get(patient_id)
+    age = pt_info['user_age']
+    hr = hr_info['heart_rate']
     if age >= 1 and age <= 2:
-        if hr > 151:
+        if hr[-1] > 151:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
     if age >= 3 and age <= 4:
-        if hr > 137:
+        if hr[-1] > 137:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
     if age >= 5 and age <= 7:
-        if hr > 133:
+        if hr[-1] > 133:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
     if age >= 8 and age <= 11:
-        if hr > 130:
+        if hr[-1] > 130:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
     if age >= 12 and age <= 15:
-        if hr > 119:
+        if hr[-1] > 119:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
         return state
 
     if age > 15:
-        if hr > 100:
+        if hr[-1] > 100:
             state = 'tachycardia'
         else:
             state = 'no tachycardia'
@@ -97,7 +105,7 @@ def tachycardia():
 
 
 @app.route("/api/heart_rate/<patient_id>", methods={"GET"})
-def prev_hr(b, p, patient_id):
+def prev_hr(patient_id):
     # s = requests.get("http://127.0.0.1:5000/api/heart_rate")
     # for d in s:  # does this work if its json???
       #  if d['patient_id'] == patient_id:
