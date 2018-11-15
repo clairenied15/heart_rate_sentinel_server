@@ -1,7 +1,7 @@
 import requests
 
 def call_status():
-    my_dict = {"user_age": 50, "heart_rate": 120}
+    my_dict = {"user_age": 50, "heart_rate": [80, 90, 110]}
     r = requests.get("http://127.0.0.1:5000/api/status/patient", json=my_dict)
     answer = r.text
     print(answer)
