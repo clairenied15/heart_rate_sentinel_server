@@ -108,11 +108,11 @@ def tachycardia(patient_id):
 def prev_hr(patient_id):
     # s = requests.get("http://127.0.0.1:5000/api/heart_rate")
     # for d in s:  # does this work if its json???
-      #  if d['patient_id'] == patient_id:
-       #     pre_hr = d['heart_rate']
-        #    return jsonify(pre_hr)
+    #  if d['patient_id'] == patient_id:
+    #     pre_hr = d['heart_rate']
+    #    return jsonify(pre_hr)
     # r = request.get_json()
-        # patinfo = item[0]
+    # patinfo = item[0]
     hrlist = b
     timelist = p
     hrinfo_by_id = build_dict(hrlist, key="patient_id")
@@ -134,7 +134,7 @@ def average_hr(patient_id):
     #   return jsonify(av_hr)
     # r = request.get_json()
     # for item in r:
-        # patinfo = item[0]
+    # patinfo = item[0]
     hrlist = b
     timelist = p
     hrinfo_by_id = build_dict(hrlist, key="patient_id")
@@ -154,7 +154,7 @@ def int_av():
     }
     # r = request.get_json()
     # for item in r:
-        # patinfo = item[0]
+    # patinfo = item[0]
     hrlist = b
     timelist = p
     hrinfo_by_id = build_dict(hrlist, key="patient_id")
@@ -162,16 +162,16 @@ def int_av():
     tminfo_by_id = build_dict(timelist, key="patient_id")
     tm_info = tminfo_by_id.get(time_av["patient_id"])
     # r = requests.get("http://127.0.0.1:5000/api/heart_rate")  # can do get request in POST???
-    strp_tm_info = datetime.datetime.strptime(tm_info['time_stamp'], '%a, %d %b %Y %H:%M:%S %Z')
+    # strp_tm_info = datetime.datetime.strptime(tm_info['time_stamp'], '%a, %d %b %Y %H:%M:%S %Z')
     strp_since_tm = datetime.datetime.strptime(time_av['heart_rate_average_since'], '%a, %b %d %H:%M:%S %Y')
-    indices = [i for i, v in enumerate(strp_tm_info >= strp_since_tm) if v]
+    indices = [i for i, v in enumerate(tm_info['time_stamp'] >= strp_since_tm) if v]
     hr_since_time = hr_info['heart_rate'][indices]
     hr_time_av = mean(hr_since_time)
-        # if dict['patient_id'] == time_av['patient_id']:
-        #  j = [i for i in d['time_stamp'] if i >= time_av['heart_rate_average_since']]
-        # indices = [i for i, v in enumerate(d['time_stamp'] >= time_av['heart_rate_average_since']) if v]
-        #  num = len(j)
-        # hr_since_time = d['heart_rate'][indices]
+    # if dict['patient_id'] == time_av['patient_id']:
+    #  j = [i for i in d['time_stamp'] if i >= time_av['heart_rate_average_since']]
+    # indices = [i for i, v in enumerate(d['time_stamp'] >= time_av['heart_rate_average_since']) if v]
+    #  num = len(j)
+    # hr_since_time = d['heart_rate'][indices]
     return jsonify(time_av, hr_since_time, hr_time_av)
 
 
