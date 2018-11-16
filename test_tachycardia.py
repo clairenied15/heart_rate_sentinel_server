@@ -10,7 +10,8 @@ def test_tach():
                   'age': 52,
                   'heart_rates': [80, 76, 77],
                   'heart_rate_times': [time1, time2, time3]},
-                 {'patient_id': "3", 'attending_email': "test@test.com", 'age': 42,
+                 {'patient_id': "3", 'attending_email': "test@test.com",
+                  'age': 42,
                   'heart_rates': [80, 76, 77],
                   'heart_rate_times': [time1, time2, time3]}]
     patient_id = "2"
