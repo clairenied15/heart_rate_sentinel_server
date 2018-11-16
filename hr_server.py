@@ -105,7 +105,7 @@ def average_hr(patient_id):
     for item in datastore:
         if item["patient_id"] == patient_id:
             hrs = item["heart_rates"]
-            hr_av = mean(hrs)
+            hr_av = sum(hrs)/len(hrs)
             return jsonify(hr_av)
 
 
