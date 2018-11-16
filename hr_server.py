@@ -8,16 +8,15 @@ app = Flask(__name__)
 
 datastore = []
 
+
 @app.route("/api/new_patient", methods=["POST"])
 def new_patient():
     """  Posts new patient data to the server in the form of a dictionary
-
     Args:
         None
 
     Returns:
         new_pat: a dictionary with the patient_id, attending_email, and user_age
-
     """
     new_pat = {
      "patient_id": "1",  # usually this would be the patient MRN
@@ -67,16 +66,17 @@ def tachycardia(patient_id):
 
     Returns:
         answer: string telling whether the specific patient is tachycardic or not based on their last heart rate measure
-
     """
     global datastore
     answer = calculate_tach(datastore, patient_id)
     return answer
 
+
 def calculate_tach(datastore, patient_id):
     """ Calculates whether or not a specific patient is tachycardic or not based on their age and most recent heart rate
     Args:
-        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and heart_rate_times list
+        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and
+                    heart_rate_times list
         patient_id: string of the id for the patient of interest
 
     Returns:
@@ -154,15 +154,16 @@ def prev_hr(patient_id):
     answer = calc_prev_hr(datastore, patient_id)
     return jsonify(answer)
 
+
 def calc_prev_hr(datastore, patient_id):
     """ Finds all of the previous heart rate measurements for the patient with the corresponding patient id
     Args:
-        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and heart_rate_times list
+        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and
+                    heart_rate_times list
         patient_id: string of the id for the patient of interest
 
     Returns:
         prev_hrs: list of all of the previous heart rate values for the specified patient
-
     """
     for item in datastore:
         if item["patient_id"] == patient_id:
@@ -183,6 +184,7 @@ def average_hr(patient_id):
     global datastore
     answer = calc_av_hr(datastore, patient_id)
     return jsonify(answer)
+
 
 def calc_av_hr(datastore, patient_id):
     """ Finds the average heart rate of a specific patient for all their hert rate measurements
@@ -209,7 +211,6 @@ def int_av():
 
     Returns:
         hr_time_av: float of the average heart rate after a time specified in the input dictionary time_av
-
     """
     time_av = {
      "patient_id": "1",
