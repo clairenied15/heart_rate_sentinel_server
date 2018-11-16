@@ -210,7 +210,6 @@ def int_av():
     Returns:
         hr_time_av: float of the average heart rate after a time specified in the input dictionary time_av
 
-
     """
     time_av = {
      "patient_id": "1",
