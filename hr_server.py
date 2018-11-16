@@ -61,12 +61,12 @@ def heart_rate():
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def tachycardia(patient_id):
-    """ Finds whether a specified patient is tachycardic or not based on their age and most recent heart rate measure
+    """ GET request of whether a specified patient is tachycardic or not based on their age and most recent heart rate
     Args:
         patient_id: string patient id value for a patient of interest
 
     Returns:
-        state: string telling whether the specific patient is tachycardic or not based on their last heart rate measure
+        answer: string telling whether the specific patient is tachycardic or not based on their last heart rate measure
 
     """
     global datastore
@@ -74,6 +74,14 @@ def tachycardia(patient_id):
     return answer
 
 def calculate_tach(datastore, patient_id):
+    """ Calculates whether or not a specific patient is tachycardic or not based on their age and most recent heart rate
+    Args:
+        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and heart_rate_times list
+        patient_id: string of the id for the patient of interest
+
+    Returns:
+        state: string stating whether or not the specified patient is tachycardic
+    """
     for item in datastore:
         if item["patient_id"] == patient_id:
             age = item["age"]
@@ -82,7 +90,7 @@ def calculate_tach(datastore, patient_id):
             if age >= 1 and age <= 2:
                 if hr[-1] > 151:
                     state = 'tachycardia'
-                    # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('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'))
+                    # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get(''))
                     # from_email = Email("claireniederriter@ymail.com")
                     # to_email = Email("cen17@duke.edu")
                     # subject = "Tachycardia"
@@ -134,7 +142,7 @@ def calculate_tach(datastore, patient_id):
 
 @app.route("/api/heart_rate/<patient_id>", methods={"GET"})
 def prev_hr(patient_id):
-    """ Finds all of the previous heart rate measurements for the patient with the corresponding patient id
+    """ GET request of all of the previous heart rate measurements for the patient with the corresponding patient id
     Args:
         patient_id: string patient id value for a patient of interest
 
@@ -143,6 +151,19 @@ def prev_hr(patient_id):
 
     """
     global datastore
+    answer = calc_prev_hr(datastore, patient_id)
+    return jsonify(answer)
+
+def calc_prev_hr(datastore, patient_id):
+    """ Finds all of the previous heart rate measurements for the patient with the corresponding patient id
+    Args:
+        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and heart_rate_times list
+        patient_id: string of the id for the patient of interest
+
+    Returns:
+        prev_hrs: list of all of the previous heart rate values for the specified patient
+
+    """
     for item in datastore:
         if item["patient_id"] == patient_id:
             prev_hrs = item["heart_rates"]
@@ -151,15 +172,28 @@ def prev_hr(patient_id):
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
 def average_hr(patient_id):
-    """ Finds the average heart rate of a specific patient for all their heart rate measurements
+    """ GET request of the average heart rate of a specific patient for all their heart rate measurements
     Args:
         patient_id: string patient id value for a patient of interest
+
+    Returns:
+        answer: float of the average heart rate for all heart rate measurements for a specific patient
+
+    """
+    global datastore
+    answer = calc_av_hr(datastore, patient_id)
+    return jsonify(answer)
+
+def calc_av_hr(datastore, patient_id):
+    """ Finds the average heart rate of a specific patient for all their hert rate measurements
+    Args:
+        datastore: list of dictionaries containing the patient_id, age, attending_email, heart_rates list, and heart_rate_times list
+        patient_id: string of the id for the patient of interest
 
     Returns:
         hr_av: float of the average heart rate for all heart rate measurements for a specific patient
 
     """
-    global datastore
     for item in datastore:
         if item["patient_id"] == patient_id:
             hrs = item["heart_rates"]
