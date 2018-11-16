@@ -1,4 +1,4 @@
-from hr_server import calculate_prev_hr
+from hr_server import calc_prev_hr
 
 
 def test_pre_hr():
@@ -14,5 +14,5 @@ def test_pre_hr():
                             'heart_rates': [80, 76, 77],
                             'heart_rate_times': [time1, time2, time3]}]
     patient_id = "2"
-    r = calculate_prev_hr(datastore, patient_id)
+    r = calc_prev_hr(datastore, patient_id)
     assert r == [80, 76, 77]
