@@ -167,7 +167,7 @@ def calc_prev_hr(datastore, patient_id):
     for item in datastore:
         if item["patient_id"] == patient_id:
             prev_hrs = item["heart_rates"]
-            return jsonify(prev_hrs)
+            return prev_hrs
 
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
@@ -198,7 +198,7 @@ def calc_av_hr(datastore, patient_id):
         if item["patient_id"] == patient_id:
             hrs = item["heart_rates"]
             hr_av = sum(hrs)/len(hrs)
-            return jsonify(hr_av)
+            return hr_av
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
