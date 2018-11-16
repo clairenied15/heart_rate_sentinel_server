@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 import datetime
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
 app = Flask(__name__)
 
 
@@ -7,10 +10,19 @@ datastore = []
 
 @app.route("/api/new_patient", methods=["POST"])
 def new_patient():
+    """  Posts new patient data to the server in the form of a dictionary
+
+    Args:
+        None
+
+    Returns:
+        new_pat: a dictionary with the patient_id, attending_email, and user_age
+
+    """
     new_pat = {
      "patient_id": "1",  # usually this would be the patient MRN
      "attending_email": "cen17@duke.edu",
-     "user_age": 50,  # in years
+     "user_age": 1,  # in years
     }
     global datastore
     datastore.append({
@@ -18,7 +30,7 @@ def new_patient():
             'age': new_pat['user_age'],
             'heart_rates': [],
             'heart_rate_times': [],
-            'attending email': new_pat['attending_email']
+            'attending_email': new_pat['attending_email']
     })
     print(datastore)
     return jsonify(new_pat)
@@ -26,9 +38,16 @@ def new_patient():
 
 @app.route("/api/heart_rate", methods=["POST"])
 def heart_rate():
+    """ Posts heart rate info for a specific patient and the time that heart rate was recorded
+    Args:
+        None
+
+    Returns:
+         pat_hr: a dictionary with patient_id, heart_rate, and time_stamp of that heart rate
+    """
     pat_hr = {
      "patient_id": "1",  # usually this would be the patient MRN
-     "heart_rate": 100,
+     "heart_rate": 160,
      "time_stamp": datetime.datetime.now()
     }
     global datastore
@@ -42,14 +61,37 @@ def heart_rate():
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def tachycardia(patient_id):
+    """ Finds whether a specified patient is tachycardic or not based on their age and most recent heart rate measure
+    Args:
+        patient_id: string patient id value for a patient of interest
+
+    Returns:
+        state: string telling whether the specific patient is tachycardic or not based on their last heart rate measure
+
+    """
     global datastore
+    answer = calculate_tach(datastore, patient_id)
+    return answer
+
+def calculate_tach(datastore, patient_id):
     for item in datastore:
         if item["patient_id"] == patient_id:
             age = item["age"]
             hr = item["heart_rates"]
+            email = item["attending_email"]
             if age >= 1 and age <= 2:
                 if hr[-1] > 151:
                     state = 'tachycardia'
+                    # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('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'))
+                    # from_email = Email("claireniederriter@ymail.com")
+                    # to_email = Email("cen17@duke.edu")
+                    # subject = "Tachycardia"
+                    # content = Content("text/plain", "and easy to do anywhere, even with Python")
+                    # mail = Mail(from_email, subject, to_email, content)
+                    # response = sg.client.mail.send.post(request_body=mail.get())
+                    # print(response.status_code)
+                    # print(response.body)
+                    # print(response.headers)
                 else:
                     state = 'no tachycardia'
                 return state
@@ -92,6 +134,14 @@ def tachycardia(patient_id):
 
 @app.route("/api/heart_rate/<patient_id>", methods={"GET"})
 def prev_hr(patient_id):
+    """ Finds all of the previous heart rate measurements for the patient with the corresponding patient id
+    Args:
+        patient_id: string patient id value for a patient of interest
+
+    Returns:
+        prev_hrs: list of all the previous heart rate measurements for a specific patient
+
+    """
     global datastore
     for item in datastore:
         if item["patient_id"] == patient_id:
@@ -101,6 +151,14 @@ def prev_hr(patient_id):
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
 def average_hr(patient_id):
+    """ Finds the average heart rate of a specific patient for all their heart rate measurements
+    Args:
+        patient_id: string patient id value for a patient of interest
+
+    Returns:
+        hr_av: float of the average heart rate for all heart rate measurements for a specific patient
+
+    """
     global datastore
     for item in datastore:
         if item["patient_id"] == patient_id:
@@ -111,18 +169,29 @@ def average_hr(patient_id):
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def int_av():
+    """ Finds the average heart rate for a specific patient after a specified time
+    Args:
+        None
+
+    Returns:
+        hr_time_av: float of the average heart rate after a time specified in the input dictionary time_av
+
+
+    """
     time_av = {
      "patient_id": "1",
-     "heart_rate_average_since": "Thu, 8 Nov 2018 18:05:50 GMT"
+     "heart_rate_average_since": "Thu, 8 Nov 2018 23:44:20 GMT"
     }
     global datastore
     for item in datastore:
         if item["patient_id"] == time_av["patient_id"]:
             strp_since_tm = datetime.datetime.strptime(time_av['heart_rate_average_since'], '%a, %b %d %H:%M:%S %Y')
-            indices = [i for i, v in enumerate(item["heart_rate_times"] >= strp_since_tm) if v]
+            strp_hr_tm = datetime.datetime.strptime(item['heart_rate_times'], '%a, %b %d %H:%M:%S %Y')
+            # indices = [i for i, v in enumerate(item["heart_rate_times"] >= time_av["heart_rate_average_since"]) if v]
+            indices = [n for n,i in enumerate(strp_hr_tm) if i >= strp_since_tm]
             hr_since_time = item['heart_rates'][indices]
-            hr_time_av = mean(hr_since_time)
-            return jsonify(time_av, hr_since_time, hr_time_av)
+            hr_time_av = sum(hr_since_time)/len(hr_since_time)
+            return jsonify(hr_time_av)
 
 
 if __name__ == "__main__":
