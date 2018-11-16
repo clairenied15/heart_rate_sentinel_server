@@ -10,9 +10,9 @@ def test_pre_hr():
                   'age': 52,
                   'heart_rates': [80, 76, 77],
                   'heart_rate_times': [time1, time2, time3]},
-                       {'patient_id': "3", 'attending_email': "test@test.com", 'age': 42,
-                            'heart_rates': [80, 76, 77],
-                            'heart_rate_times': [time1, time2, time3]}]
+                 {'patient_id': "3", 'attending_email': "test@test.com", 'age': 42,
+                  'heart_rates': [80, 76, 77],
+                  'heart_rate_times': [time1, time2, time3]}]
     patient_id = "2"
     r = calc_prev_hr(datastore, patient_id)
     assert r == [80, 76, 77]
