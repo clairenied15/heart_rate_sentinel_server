@@ -1,5 +1,6 @@
 import requests
 
+
 def call_server_hr():
     r = requests.post("http://127.0.0.1:5000/api/heart_rate")
     answer = r.json()
