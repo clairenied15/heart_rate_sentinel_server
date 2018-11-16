@@ -124,7 +124,7 @@ def prev_hr(patient_id):
 
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
-def average_hr(patient_id, b, p):
+def average_hr(patient_id):
     # p = request.get_json()
     # p = requests.get("http://127.0.0.1:5000/api/heart_rate")
     # for d in p:
@@ -147,10 +147,10 @@ def average_hr(patient_id, b, p):
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
-def int_av(b, p):
+def int_av():
     time_av = {
      "patient_id": "1",
-     "heart_rate_average_since": "2018-03-09 11:00:36.372339"
+     "heart_rate_average_since": "Thu, 8 Nov 2018 18:05:50 GMT"
     }
     # r = request.get_json()
     # for item in r:
@@ -162,7 +162,9 @@ def int_av(b, p):
     tminfo_by_id = build_dict(timelist, key="patient_id")
     tm_info = tminfo_by_id.get(time_av["patient_id"])
     # r = requests.get("http://127.0.0.1:5000/api/heart_rate")  # can do get request in POST???
-    indices = [i for i, v in enumerate(tm_info['time_stamp'] >= time_av['heart_rate_average_since']) if v]
+    strp_tm_info = datetime.datetime.strptime(tm_info['time_stamp'], '%a, %d %b %Y %H:%M:%S %Z')
+    strp_since_tm = datetime.datetime.strptime(time_av['heart_rate_average_since'], '%a, %b %d %H:%M:%S %Y')
+    indices = [i for i, v in enumerate(strp_tm_info >= strp_since_tm) if v]
     hr_since_time = hr_info['heart_rate'][indices]
     hr_time_av = mean(hr_since_time)
         # if dict['patient_id'] == time_av['patient_id']:
