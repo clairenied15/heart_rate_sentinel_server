@@ -20,6 +20,7 @@ def new_patient():
             'heart_rate_times': [],
             'attending email': new_pat['attending_email']
     })
+    print(datastore)
     return jsonify(new_pat)
 
 
@@ -31,11 +32,15 @@ def heart_rate():
      "time_stamp": datetime.datetime.now()
     }
     global datastore
-    datastore[pat_hr["patient_id"]]["heart_rates"].append(pat_hr["heart_rate"])
-    datastore[pat_hr["patient_id"]]["heart_rate_times"].append(pat_hr["time_stamp"])
+    for item in datastore:
+        if item["patient_id"] == pat_hr["patient_id"]:
+            item["heart_rates"].append(pat_hr["heart_rate"])
+            item["heart_rate_times"].append(pat_hr["time_stamp"])
+    # datastore[pat_hr["patient_id"]]["heart_rates"].append(pat_hr["heart_rate"])
+    # datastore[pat_hr["patient_id"]]["heart_rate_times"].append(pat_hr["time_stamp"])
     # hr_lst = [l['heart_rate'] for l in pat_hr_list]
     # time_list = [m['time_stamp'] for m in pat_hr_list]
-    return jsonify(pat_hr)
+            return jsonify(pat_hr)
 
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
