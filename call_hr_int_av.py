@@ -1,5 +1,4 @@
 import requests
-import datetime
 
 
 def call_hr_intav():
