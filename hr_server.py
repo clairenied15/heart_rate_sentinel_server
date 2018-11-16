@@ -36,10 +36,7 @@ def heart_rate():
         if item["patient_id"] == pat_hr["patient_id"]:
             item["heart_rates"].append(pat_hr["heart_rate"])
             item["heart_rate_times"].append(pat_hr["time_stamp"])
-    # datastore[pat_hr["patient_id"]]["heart_rates"].append(pat_hr["heart_rate"])
-    # datastore[pat_hr["patient_id"]]["heart_rate_times"].append(pat_hr["time_stamp"])
-    # hr_lst = [l['heart_rate'] for l in pat_hr_list]
-    # time_list = [m['time_stamp'] for m in pat_hr_list]
+            print(datastore)
             return jsonify(pat_hr)
 
 
